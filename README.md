@@ -1,30 +1,51 @@
-# 🤖 Franka Emika Panda: Autonomous Pick-and-Place Robot
+# meam5200-group17-Franka-Emika-Pick-and-Place
+MEAM5200 Final Project
+
+
+# 🤖 Pick, Place, Stack Execution for Static and Dynamic objects using Franka Emika Panda
+
+> **Description**: We built an advanced robotic pick-place-stack system for the 7-DOF Franka Emika Panda manipulator, achieving autonomous block stacking with static and dynamic object manipulation.
 
 [![Competition Result](https://img.shields.io/badge/Competition-3rd%20Place-bronze?style=for-the-badge)](https://github.com)
 [![Score](https://img.shields.io/badge/High%20Score-8500%20pts-success?style=for-the-badge)](https://github.com)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
 [![ROS](https://img.shields.io/badge/ROS-Noetic-22314E?style=for-the-badge&logo=ros)](https://www.ros.org/)
 
-> **MEAM 5200 Final Project**: An advanced robotic pick-and-place system for the 7-DOF Franka Emika Panda manipulator, achieving autonomous block stacking with static and dynamic object manipulation.
+<div align="center">
+
+<p float="left">
+  <img src="images/robot_setup.jpg" alt="Robot Setup" width="45%" />
+  <img src="images/competition_stack.jpg" alt="Competition Stack" width="45%" />
+</p>
+
+</div>
 
 ---
 
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Team](#-team)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
 - [Technical Approach](#-technical-approach)
+  - [1. Visual Perception & Detection](#1-visual-perception--detection)
+  - [2. Inverse Kinematics](#2-inverse-kinematics)
+  - [3. End-Effector Orientation](#3-end-effector-orientation)
+  - [4. Dynamic Block Prediction](#4-dynamic-block-prediction)
+  - [5. Motion Planning Comparison](#5-motion-planning-comparison)
 - [Performance Results](#-performance-results)
 - [Installation & Setup](#-installation--setup)
 - [Usage](#-usage)
 - [Repository Structure](#-repository-structure)
 - [Key Algorithms](#-key-algorithms)
-- [Competition Format](#-competition-format)
+  - [1. Forward Kinematics](#1-forward-kinematics)
+  - [2. Jacobian Calculation](#2-jacobian-calculation)
+  - [3. Collision Detection](#3-collision-detection)
+  - [4. Manipulability Index](#4-manipulability-index)
 - [Lessons Learned](#-lessons-learned)
 - [Future Improvements](#-future-improvements)
 - [References](#-references)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 
@@ -32,10 +53,10 @@
 
 This project implements a complete autonomous robotic system for the **MEAM 5200 Pick-and-Place Challenge**. The goal was to design, implement, and deploy a robust solution capable of:
 
-- 🎲 **Detecting and grasping** stationary (white) and dynamic (yellow) 50mm × 50mm × 50mm blocks
-- 🏗️ **Stacking blocks** on a goal platform to maximize tower height
-- ⚡ **Operating autonomously** within a 5-minute time constraint to maximize scoring
-- 🤝 **Competing head-to-head** against another robot in a shared workspace while avoiding collisions
+- 🎲 **Detecting and grasping** stationary (white) and dynamic (yellow) 50mm × 50mm × 50mm blocks on a spinning platform
+- 🏗️ **Stacking blocks** on a goal platform to maximize tower height and block score
+- ⚡ **Operating autonomously** within a 5-minute time constraint, maximizing points through strategic block selection and placement
+- 🤝 **Competing head-to-head** against another robot in a shared workspace while avoiding collision
 
 ### Challenge Specifications
 
@@ -58,7 +79,6 @@ Total Score = Σ (Points for each block)
 ---
 
 **Course**: MEAM 5200 - Introduction to Robotics  
-**Institution**: University of Pennsylvania  
 **Competition Date**: December 11, 2024  
 **Final Result**: 🥉 **3rd Place** | **8,500 points**
 
@@ -123,38 +143,18 @@ Total Score = Σ (Points for each block)
         │   CONTROL   │
         └─────────────┘
 ```
-
-### High-Level Control Flow
-
-```mermaid
-graph TD
-    A[Initialize Robot] --> B[Set Start Position]
-    B --> C[PickPlaceStatic<br/>4 Static Blocks]
-    C --> D[Move to Turntable View]
-    D --> E[PickPlaceDynamic<br/>4 Dynamic Blocks]
-    E --> F[Competition Complete]
-    
-    C --> C1[Detect Block]
-    C1 --> C2[Calculate IK]
-    C2 --> C3[Grasp Block]
-    C3 --> C4[Stack on Platform]
-    C4 --> C5{More Blocks?}
-    C5 -->|Yes| C1
-    C5 -->|No| D
-    
-    E --> E1[Detect Rotating Block]
-    E1 --> E2[Predict Position]
-    E2 --> E3[Calculate Intercept]
-    E3 --> E4[Grasp Block]
-    E4 --> E5[Stack on Tower]
-    E5 --> E6{More Blocks?}
-    E6 -->|Yes| E1
-    E6 -->|No| F
-```
-
 ---
 
 ## 🔬 Technical Approach
+
+<div align="center">
+<p float="left">
+  <img src="images/block_detection_sim.jpg" alt="Block Detection Simulation" width="45%" />
+  <img src="images/block_detection_hardware.jpg" alt="Block Detection Hardware" width="45%" />
+</p>
+</div>
+
+<br>
 
 ### 1. Visual Perception & Detection
 
@@ -374,6 +374,7 @@ Total Runtime: ~256 seconds (avg)
 ---
 
 ## 🚀 Installation & Setup
+This portion of my repository contains all the necessary code and instructions needed to set up the environment using the Franka Emika Panda robot.
 
 ### Prerequisites
 
@@ -509,6 +510,12 @@ meam520_labs/
 │   ├── MEAM5200_Final_Project.pdf
 │   └── MEAM5200_Final_Project_Report.pdf
 │
+├── images/
+│   ├── robot_setup.jpg
+│   ├── competition_stack.jpg
+│   ├── block_detection_sim.jpg
+│   └── block_detection_hardware.jpg
+│
 └── README.md                           # This file
 ```
 
@@ -639,14 +646,6 @@ def calcManipulability(q_in):
    - Required multiple attempts with different seeds
    - Pre-calculated "emergency" configurations as backup
 
-### 💡 Key Insights
-
-> **"Hardware testing is irreplaceable"** - Simulation cannot capture all real-world uncertainties (sensor noise, mechanical tolerances, timing variations)
-
-> **"Reliability > Speed"** - Consistent 80% success better than risky 50% chance at higher scores
-
-> **"Iterative tuning is essential"** - Parameters like ωt, α, force thresholds require empirical optimization
-
 ---
 
 ## 🔮 Future Improvements
@@ -677,8 +676,6 @@ def calcManipulability(q_in):
    distance_to_obstacle = compute_clearance(q)
    speed_scale = min(1.0, distance_to_obstacle / safe_threshold)
    ```
-
-
 ---
 
 ## 📖 References
@@ -708,6 +705,6 @@ def calcManipulability(q_in):
 
 ### 🏆 Competition Results: 3rd Place | 8,500 Points 🏆
 
-[⬆ Back to Top](#-franka-emika-panda-autonomous-pick-and-place-robot)
+[⬆ Back to Top](#-pick-place-stack-execution-for-static-and-dynamic-objects-using-franka-emika-panda)
 
 </div>
