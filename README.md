@@ -1,7 +1,3 @@
-# meam5200-group17-Franka-Emika-Pick-and-Place
-MEAM5200 Final Project
-
-
 # 🤖 Pick, Place, Stack Execution for Static and Dynamic objects using Franka Emika Panda
 
 > **Description**: We built an advanced robotic pick-place-stack system for the 7-DOF Franka Emika Panda manipulator, achieving autonomous block stacking with static and dynamic object manipulation.
